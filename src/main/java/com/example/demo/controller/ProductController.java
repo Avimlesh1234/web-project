@@ -1,8 +1,12 @@
 package com.example.demo.controller;
 
 import java.io.File;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +21,12 @@ import com.example.demo.repository.ProductCatRepository;
 import com.example.demo.repository.ProductCatSubRepository;
 import com.example.demo.repository.ProductRepo;
 import com.example.demo.response.ProductResponse;
+import com.example.demo.service.ProductService;
+import com.example.demo.vo.ProductVo;
 
 @RestController
+
+@CrossOrigin("*")
 public class ProductController {
 	
 	@Autowired 
@@ -30,6 +38,32 @@ public class ProductController {
 	@Autowired 
 	private ProductRepo productrepo;
 	
+	@Autowired
+	private ProductService prodservice;
+	
+	
+	@GetMapping("/getproductcat")
+	
+	public @ResponseBody List<ProductCat> getcategorybyId()
+	{
+		
+		List<ProductCat> productcatt= (List<ProductCat>) catrepository.findAll();
+		return productcatt;
+		
+	}
+	
+
+	@GetMapping("/getproductsubcat")
+	
+	public @ResponseBody List<ProductSubCat> getsubcategorybyId(@RequestParam Integer pcid)
+	{
+		
+		List<ProductSubCat> productcatt= subcatrepository.findByPcid(pcid);
+		return productcatt;
+		
+	}
+	
+	
 	
 	@PostMapping("/add_prod_cat")
 	
@@ -39,6 +73,9 @@ public class ProductController {
 
 		try {
 			
+			
+			if(prodcat.getCategory()!=null && prodcat.getDescription()!=null) {
+						
 			ProductCat productcatt= catrepository.save(prodcat);
 			
 			if(productcatt!=null)
@@ -47,6 +84,12 @@ public class ProductController {
 			return res;
 				
 			}
+			res.setMsg("failed");
+			res.setStatus("400");
+			return res;
+			
+			}
+			
 			res.setMsg("failed");
 			res.setStatus("400");
 			return res;
@@ -67,21 +110,47 @@ public class ProductController {
 	public @ResponseBody ProductResponse addProfdCat(@RequestBody ProductSubCat prodsubcat)
 	{
 		ProductResponse res=new ProductResponse();
+		  ProductSubCat productsubcatt=new ProductSubCat();
 
 		try {
-			
-			ProductSubCat productcatt= subcatrepository.save(prodsubcat);
-			
-			if(productcatt!=null)
+			if(!prodsubcat.getPcid().equals("") && !prodsubcat.getSubcategory().equals(""))
 			{
-				res.setMsg("sucess");
-				res.setStatus("200");
+			
+			
+			  if(prodsubcat.getPcid()!=null) {
+				  
+			 Optional<ProductCat>  productcatt=catrepository.findById(Long.valueOf(prodsubcat.getPcid()));
+			  System.out.println(productcatt);
+			  
+			  
+			  if(productcatt!=null)
+			  {
+				  productsubcatt	= subcatrepository.save(prodsubcat);
+				
+				if(!productcatt.isEmpty())
+				{
+					res.setMsg("sucess");
+					res.setStatus("200");
+					return res;
+				}
+				res.setMsg("failed");
+				res.setStatus("400");
 				return res;
 			}
-			res.setMsg("failed");
+			  res.setMsg("failed");
+				res.setStatus("400");
+				return res;
+			  }
+			  
+			  }
+		
+		 res.setMsg("failed");
 			res.setStatus("400");
 			return res;
 		}
+			 
+			
+			
 		catch (Exception e) {
 			
 			e.printStackTrace();
@@ -95,61 +164,61 @@ public class ProductController {
 
 @PostMapping("/add_product")
 
-public @ResponseBody ProductResponse fileupload(@RequestParam("image") MultipartFile image,@RequestParam("productCategory")String productCategory,@RequestParam("productSubCategory")String productSubCategory,@RequestParam("brandnName")String brandnName,@RequestParam("price")String price,@RequestParam("serialNo")String serialNo,@RequestParam("quantity")String quantity)
+public @ResponseBody ProductResponse uploadproduct(@RequestBody ProductVo prodvo)
 {
 	
 		
-			ProductResponse rees=new ProductResponse();
+			ProductResponse res=new ProductResponse();
 			
-			String path="C:\\Users\\Lenovo\\"+image;
+			//String path="C:\\Users\\Lenovo\\"+image;
+		//	MultipartFile m=prodvo.getImage().toString();
+			// fileName=controller.uploadImage(path,image);
 			
-			String fileName=null;
 			try {
-				ProductController controller=new ProductController();
-				  fileName=controller.uploadImage(path,image);
-				  Product product =new Product();		  																																																			
-				  product.setFilename(fileName); 
-				  product.setBrandname(brandnName);
-				  product.setPrice(price);
-				  product.setProductname(productCategory);
-				  product.setSubcategory(productSubCategory);
-				  product=  productrepo.save(product);
+				if(prodvo!=null)
+				{
+					
+				  Product product=prodservice.addproduct(prodvo);
+				  
 				  if(product!=null)
-				  { rees.setStatus("200");
-				  rees.setMsg("save");
-					  return rees;
+				  {
+					  res.setMsg("save success");
+					 res.setStatus("200");
+					 return res;
+
 				  }
-				  return rees;
-				 
+				  res.setMsg("failed");
+					 res.setStatus("400");
+					return res;
+				}
+				 res.setMsg("failed");
+				 res.setStatus("400");
+				return res;
 			}
 			catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
 			}
 			
-			return rees;		
+			return res;		
 }
 
-public String uploadImage(String path, MultipartFile file) {
-	String  name=file.getOriginalFilename();
-	
-	
-	String filepath=path+ File.separator+name;
-	
-	
-	// create foleder if not created
-	
-	File f=new File(path);
-	if(!f.exists())
-	{
-		f.mkdir();
-	}
-			
-	return filepath;
-	}
-	 
-	
-
+/*
+ * public String uploadImage(String path, MultipartFile file) { String
+ * name=file.getOriginalFilename();
+ * 
+ * 
+ * String filepath=path+ File.separator+name;
+ * 
+ * 
+ * // create foleder if not created
+ * 
+ * File f=new File(path); if(!f.exists()) { f.mkdir(); }
+ * 
+ * return filepath; }
+ * 
+ * 
+ */
 
 
 }

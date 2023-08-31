@@ -1,0 +1,66 @@
+package com.example.demo.model;
+
+import jakarta.annotation.Generated;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class ProductImage {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private String mainImage;
+	private  String image2;
+	private String image3;
+	private String image4;
+	private String image5;
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getMainImage() {
+		return mainImage;
+	}
+	public void setMainImage(String mainImage) {
+		this.mainImage = mainImage;
+	}
+	public String getImage2() {
+		return image2;
+	}
+	public void setImage2(String image2) {
+		this.image2 = image2;
+	}
+	public String getImage3() {
+		return image3;
+	}
+	public void setImage3(String image3) {
+		this.image3 = image3;
+	}
+	public String getImage4() {
+		return image4;
+	}
+	public void setImage4(String image4) {
+		this.image4 = image4;
+	}
+	public String getImage5() {
+		return image5;
+	}
+	public void setImage5(String image5) {
+		this.image5 = image5;
+	}
+	@Override
+	public String toString() {
+		return "ProductImage [id=" + id + ", mainImage=" + mainImage + ", image2=" + image2 + ", image3=" + image3
+				+ ", image4=" + image4 + ", image5=" + image5 + "]";
+	}
+	
+	
+	
+	
+
+}
