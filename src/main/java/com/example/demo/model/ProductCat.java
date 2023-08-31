@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 public class ProductCat {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String category;
 	
@@ -53,6 +53,12 @@ public class ProductCat {
 		this.category = category;
 		this.description = description;
 	}
+
+	public ProductCat() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	
 	
 	
