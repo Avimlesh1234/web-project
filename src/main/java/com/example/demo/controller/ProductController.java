@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.Dto.MessageDto;
+import com.example.demo.Dto.ProductDto;
 import com.example.demo.model.Product;
 import com.example.demo.model.ProductCat;
 import com.example.demo.model.ProductSubCat;
@@ -41,6 +46,38 @@ public class ProductController {
 	@Autowired
 	private ProductService prodservice;
 	
+	
+	
+	
+	@GetMapping("/getproductlist")
+	public ResponseEntity<MessageDto> getproductlist(){
+		MessageDto messagedto=new MessageDto();
+		try {
+			List<ProductDto> productdtolist=new ArrayList<>();
+			ProductDto productdto=new ProductDto();
+			productdtolist=prodservice.getProductlist();
+			if(productdtolist.size()>0) {
+				messagedto.setStatus(200);
+				messagedto.setHttpstatus(HttpStatus.OK);
+				messagedto.setMessage("Successful");
+				messagedto.setData(productdtolist);
+				
+			}
+			else {
+				messagedto.setStatus(400);
+				messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
+				messagedto.setMessage("No Data Found");
+				messagedto.setData(productdtolist);
+			}
+			
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+		
+	}
 	
 	@GetMapping("/getproductcat")
 	
