@@ -16,5 +16,7 @@ public interface UserService {
 
 	MessageDto userLogin(LoginDto loginvo);
 
+	UserDto findUserByemail(String email);
+
 
 }
