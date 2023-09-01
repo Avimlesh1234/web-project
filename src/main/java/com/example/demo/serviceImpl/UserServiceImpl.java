@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Dto.LoginDto;
+import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.UserDto;
 
 import com.example.demo.Utils.AesEncyption;
@@ -74,7 +77,7 @@ public class UserServiceImpl implements UserService {
 		user.setAddress(userdto.getAddress());
 		user.setCreateDate(onborderdDate);
 		user.setModifiedDate(onborderdDate);
-		String encyptedpassword = AesEncyption.hashPassword(userdto.getPassword());
+		String encyptedpassword = AesEncyption.encrypt(userdto.getPassword());
 		user.setPassword(encyptedpassword);
 		user.setStatus(1);
 
@@ -82,6 +85,43 @@ public class UserServiceImpl implements UserService {
 
 		userdto.setUserId(user.getUserId());
 		return userdto;
+	}
+
+	@Override
+	public MessageDto userLogin(LoginDto loginvo) {
+		// TODO Auto-generated method stub
+		MessageDto  messageDto= new MessageDto();
+		try {
+			
+			String encyptedpassword = AesEncyption.encrypt(loginvo.getPassword());		
+			
+			Users user=userrepo.findByEmail(loginvo.getEmail());
+		//	String decyptedpassword = AesEncyption.de(loginvo.getPassword());
+			if(user!=null)
+			{
+				if(user.getPassword().equals(encyptedpassword))
+				{
+					messageDto.setMessage("User Successfully Login");
+					messageDto.setStatus(200);
+					messageDto.setHttpstatus(HttpStatus.OK);
+					return messageDto;
+				}
+				messageDto.setMessage("Password Missmatch");
+				messageDto.setStatus(400);
+				messageDto.setHttpstatus(HttpStatus.BAD_REQUEST);
+				return messageDto;
+				
+			}
+			messageDto.setMessage("user not found");
+			messageDto.setStatus(400);
+			messageDto.setHttpstatus(HttpStatus.BAD_REQUEST);
+			return messageDto;
+			
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return messageDto;
 	}
 
 }

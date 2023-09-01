@@ -6,6 +6,7 @@ public class MessageDto {
 	private int status;
 	private HttpStatus httpstatus;
 	private String message;
+	
 	public MessageDto(String message, Object data) {
 		super();
 		this.message = message;

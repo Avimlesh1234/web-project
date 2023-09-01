@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Dto.UserDto;
+import com.example.demo.model.Users;
+import com.example.demo.Dto.LoginDto;
 import com.example.demo.Dto.MessageDto;
 import com.example.demo.service.UserService;
 
@@ -19,11 +22,8 @@ import com.example.demo.service.UserService;
 @RequestMapping("/user")
 @CrossOrigin("*")
 public class UserController {
-	
-	
 	@Autowired
 	private UserService userService;
-	
 	@PostMapping(value="addusers")
 	public ResponseEntity <MessageDto> addUser(@RequestBody UserDto userdto){
 		try {
@@ -34,7 +34,7 @@ public class UserController {
 				for(UserDto user:userdtos) {
 					if( user.getEmail().equalsIgnoreCase(userdto.getEmail())) {
 						messagedto.setMessage("Email is Duplicate or Email is null");
-						messagedto.setStatus(403);
+						messagedto.setStatus(403);                     
 						messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
 						return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 					}
@@ -49,11 +49,9 @@ public class UserController {
 						messagedto.setStatus(403);
 						messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
 						return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
-					}
-					
+					}			
 				}
-				
-				
+								
 			}
 			usersdto=userService.addUsers(userdto);
 			if(userdto!=null) {
@@ -71,6 +69,31 @@ public class UserController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	
+	@PostMapping(value="userlogin")
+	public  @ResponseBody MessageDto userLogin(@RequestBody LoginDto loginvo)
+	{
+		MessageDto res=new MessageDto();
+		try {
+			if(!loginvo.getEmail().equals("") && !loginvo.getPassword().equals("") && loginvo!=null)
+			{
+				 res=userService.userLogin(loginvo);
+				return res;	
+			}
+			res.setMessage("invalid filed");
+			res.setStatus(400);
+			res.setHttpstatus(HttpStatus.BAD_REQUEST);
+			return res;
+			
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return res;
+		
 	}
 	
 	
