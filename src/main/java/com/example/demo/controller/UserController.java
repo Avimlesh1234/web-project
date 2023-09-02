@@ -50,8 +50,7 @@ public class UserController {
 						messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
 						return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 					}			
-				}
-								
+				}	
 			}
 			usersdto=userService.addUsers(userdto);
 			if(userdto!=null) {
