@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +27,7 @@ import com.example.demo.service.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	
 	@PostMapping(value="addusers")
 	public ResponseEntity <MessageDto> addUser(@RequestBody UserDto userdto){
 		try {
@@ -70,6 +74,37 @@ public class UserController {
 		return null;
 	}
 	
+	@GetMapping("/Hello")
+	public void good() {
+		System.out.println("Hello");
+	}
+	
+	@PostMapping(value="/getuser")
+	public ResponseEntity<MessageDto> findUserByemail(@RequestParam String email){
+		MessageDto messagedto=new MessageDto();
+	    try {
+	    	UserDto userdto=userService.findUserByemail(email);
+	    	if(userdto!=null) {
+	    		messagedto.setStatus(200);
+	    		messagedto.setHttpstatus(HttpStatus.OK);
+	    		messagedto.setMessage("Welcome "+userdto.getUsername());
+	    		messagedto.setData(userdto);
+	    		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	    	}
+	    	else {
+	    		messagedto.setStatus(403);
+	    		messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
+	    		messagedto.setMessage("Unable to Navigate On DashBoard");
+	    		messagedto.setData(userdto);
+	    	}
+	    	
+	    	
+	    	
+	    }catch(Exception e) {
+	    	e.printStackTrace();
+	    }
+	    return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	}
 	
 	@PostMapping(value="userlogin")
 	public  @ResponseBody MessageDto userLogin(@RequestBody LoginDto loginvo)

@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.User;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -94,8 +96,8 @@ public class UserServiceImpl implements UserService {
 		try {
 			
 			String encyptedpassword = AesEncyption.encrypt(loginvo.getPassword());		
-			
-			Users user=userrepo.findByEmail(loginvo.getEmail());
+			String useremail=loginvo.getEmail();
+			Users user=(Users)userrepo.findByEmail(useremail);
 		//	String decyptedpassword = AesEncyption.de(loginvo.getPassword());
 			if(user!=null)
 			{
@@ -122,6 +124,21 @@ public class UserServiceImpl implements UserService {
 			// TODO: handle exception
 		}
 		return messageDto;
+	}
+
+	@Override
+	public UserDto findUserByemail(String email) {
+		try {
+			Users user=(Users) userrepo.findByEmail(email);
+			
+			UserDto userdto=new UserDto();
+			BeanUtils.copyProperties(user, userdto);
+			return userdto;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
