@@ -3,12 +3,14 @@ package com.example.demo.serviceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.catalina.User;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -129,7 +131,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto findUserByemail(String email) {
 		try {
-			Users user=(Users) userrepo.findByEmail(email);
+			Users user=(Users)userrepo.findByEmail(email);
 			
 			UserDto userdto=new UserDto();
 			BeanUtils.copyProperties(user, userdto);
@@ -139,6 +141,48 @@ public class UserServiceImpl implements UserService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public int updateprofiledetails(UserDto userdto) {
+		
+		int status=0;
+		try {
+			Optional<Users> userdata;
+			Users user=new Users();
+			LocalDateTime date=LocalDateTime.now();
+			Long userid=userdto.getUserId();
+			userdata=userrepo.findById(userid);
+			
+			
+			
+			if(userdata!=null) {
+				user.setUserId(userid);
+				user.setFirstName(userdto.getFirstName());
+				user.setLastName(userdto.getLastName());
+				user.setAddress(userdto.getAddress());
+				user.setModifiedDate(date);
+				 try {
+					status= userrepo.updateUser(user.getUserId(),user.getFirstName(),user.getLastName(),user.getAddress());
+					
+			        } catch (DataAccessException e) {
+			           e.printStackTrace();
+			           
+			        }
+				
+			}
+			else {
+				return status;
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		
+		
+}
+		
+		return status;
 	}
 
 }

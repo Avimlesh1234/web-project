@@ -18,5 +18,7 @@ public interface UserService {
 
 	UserDto findUserByemail(String email);
 
+	int updateprofiledetails(UserDto userdto);
+
 
 }
