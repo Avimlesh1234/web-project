@@ -83,7 +83,8 @@ public class UserController {
 	public ResponseEntity<MessageDto> findUserByemail(@RequestParam String email){
 		MessageDto messagedto=new MessageDto();
 	    try {
-	    	UserDto userdto=userService.findUserByemail(email);
+	    	String Email=email;
+	    	UserDto userdto=userService.findUserByemail(Email);
 	    	if(userdto!=null) {
 	    		messagedto.setStatus(200);
 	    		messagedto.setHttpstatus(HttpStatus.OK);
@@ -104,6 +105,31 @@ public class UserController {
 	    	e.printStackTrace();
 	    }
 	    return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	}
+	
+	@PostMapping(value="/updateprofiledetails")
+	public ResponseEntity<MessageDto> updateprofiledetails(@RequestBody UserDto userdto){
+		MessageDto messagedto=new MessageDto();
+		try {
+			
+			int status=userService.updateprofiledetails(userdto);
+			if(status==1) {
+				messagedto.setMessage("Details Succesfully Updated");
+				messagedto.setStatus(200);
+				messagedto.setHttpstatus(HttpStatus.OK);
+			}
+			else {
+				messagedto.setMessage("Updation Failed");
+				messagedto.setStatus(403);
+				messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
+			}
+			
+			
+			
+		}catch(Exception e) {
+			
+		}
+		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 	}
 	
 	@PostMapping(value="userlogin")
