@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.ProductDto;
+import com.example.demo.Dto.SearchDto;
 import com.example.demo.model.Product;
 import com.example.demo.model.ProductCat;
 import com.example.demo.model.ProductSubCat;
@@ -238,6 +239,28 @@ public @ResponseBody ProductResponse uploadproduct(@RequestBody ProductVo prodvo
 			}
 			
 			return res;		
+}
+
+
+
+@PostMapping("/searchproduct")
+public ResponseEntity <MessageDto> searchproduct(@RequestBody List<SearchDto> searchdto) {
+	List<ProductDto>productdto=new ArrayList<>();
+	MessageDto messagedto=new MessageDto();
+	if(searchdto.size()<0) {
+		messagedto.setStatus(400);
+		messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
+		messagedto.setMessage("Data Not Found  ");
+		
+		
+	}
+	else {
+		productdto=prodservice.serachproduct(searchdto);
+	}
+		
+		
+	
+	return null;
 }
 
 /*

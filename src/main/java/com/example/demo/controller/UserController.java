@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import com.example.demo.Dto.UserDto;
 import com.example.demo.model.Users;
 import com.example.demo.Dto.LoginDto;
 import com.example.demo.Dto.MessageDto;
+import com.example.demo.Dto.ProductDto;
+import com.example.demo.Dto.SearchDto;
 import com.example.demo.service.UserService;
 
 @RestController()
@@ -75,10 +78,6 @@ public class UserController {
 		return null;
 	}
 	
-	@GetMapping("/Hello")
-	public void good() {
-		System.out.println("Hello");
-	}
 	
 	@PostMapping(value="/getuser")
 	public ResponseEntity<MessageDto> findUserByemail(@RequestParam String email){
@@ -108,6 +107,7 @@ public class UserController {
 	    return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 	}
 	
+	
 	@PostMapping(value="/updateprofiledetails")
 	public ResponseEntity<MessageDto> updateprofiledetails(@RequestBody UserDto userdto){
 		MessageDto messagedto=new MessageDto();
@@ -133,6 +133,8 @@ public class UserController {
 		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 	}
 	
+	
+	
 	@PostMapping(value="userlogin")
 	public  @ResponseBody MessageDto userLogin(@RequestBody LoginDto loginvo)
 	{
@@ -156,6 +158,7 @@ public class UserController {
 		return res;
 		
 	}
+	
 	
 	
 	

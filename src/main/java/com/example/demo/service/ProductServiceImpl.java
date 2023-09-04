@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Dto.ProductDto;
+import com.example.demo.Dto.SearchDto;
 import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepo;
 import com.example.demo.vo.ProductVo;
@@ -49,6 +50,29 @@ public class ProductServiceImpl implements ProductService {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+	@Override
+	public List<ProductDto> serachproduct(List<SearchDto> searchdtolist) {
+		List<Product>productlist=new ArrayList<>();
+		List<ProductDto>productdtolist=new ArrayList<>();
+		
+		SearchDto searchdto=new SearchDto();
+		try {
+			
+			int size=searchdtolist.size();
+			while(size<0) {
+				searchdto=new SearchDto();
+				searchdto=searchdtolist.get(size-1);
+				productlist=productrepo.searchproductlist(searchdto.getSearchkey(),searchdto.getSearchvalue());
+				
+			}
+			
+			return productdtolist ;
+		}catch(Exception e) {
+			
+			
 		}
 		return null;
 	}
