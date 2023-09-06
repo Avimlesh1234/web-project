@@ -62,10 +62,11 @@ public class ProductServiceImpl implements ProductService {
 		try {
 			
 			int size=searchdtolist.size();
-			while(size<0) {
+			while(size>0) {
 				searchdto=new SearchDto();
 				searchdto=searchdtolist.get(size-1);
 				productlist=productrepo.searchproductlist(searchdto.getSearchkey(),searchdto.getSearchvalue());
+				size--;
 				
 			}
 			
