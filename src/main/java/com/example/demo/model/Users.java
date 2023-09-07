@@ -58,6 +58,9 @@ public class Users implements Serializable {
 
 	@Column(name = "status")
 	private int status;
+	
+	@Column(name = "mid")
+	private Long mid;
 
 	@Column(name = "address")
 	private String address;
@@ -169,13 +172,24 @@ public class Users implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	
+
+	public Long getMid() {
+		return mid;
+	}
+
+	public void setMid(Long mid) {
+		this.mid = mid;
+	}
 
 	@Override
 	public String toString() {
-		return "DukaanUsers [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", username="
+		return "Users [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", username="
 				+ username + ", email=" + email + ", password=" + password + ", role_id=" + role_id + ", mobileNo="
 				+ mobileNo + ", createDate=" + createDate + ", modifiedDate=" + modifiedDate + ", modifiedBy="
-				+ modifiedBy + ", status=" + status + ", address=" + address + "]";
+				+ modifiedBy + ", status=" + status + ", mid=" + mid + ", address=" + address + "]";
 	}
 
+	
 }

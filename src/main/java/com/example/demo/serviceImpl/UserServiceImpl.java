@@ -19,8 +19,11 @@ import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.UserDto;
 
 import com.example.demo.Utils.AesEncyption;
+import com.example.demo.model.Merchant;
 import com.example.demo.model.Users;
+import com.example.demo.repository.MerchantRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.MerchantService;
 import com.example.demo.service.UserService;
 
 @Service
@@ -28,6 +31,8 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userrepo;
+	@Autowired
+	private MerchantRepository  merchantRepository;
 
 	@Override
 	public List<UserDto> getUsers() {
@@ -84,8 +89,25 @@ public class UserServiceImpl implements UserService {
 		String encyptedpassword = AesEncyption.encrypt(userdto.getPassword());
 		user.setPassword(encyptedpassword);
 		user.setStatus(1);
+		try {
 
 		user = userrepo.save(user);
+		
+		if(user!=null)
+		{
+			
+			  Merchant merchant =new Merchant(); 
+			  merchant.setEmail(user.getEmail());
+			  merchant.setPhone1(user.getMobileNo()); merchantRepository.save(merchant);
+			 
+		}
+		
+		
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 
 		userdto.setUserId(user.getUserId());
 		return userdto;

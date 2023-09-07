@@ -79,7 +79,7 @@ public class UserController {
 		System.out.println("Hello");
 	}
 	
-	@GetMapping(value="/getuser")
+	@PostMapping(value="/getuser")
 	public ResponseEntity<MessageDto> findUserByemail(@RequestParam String email){
 		MessageDto messagedto=new MessageDto();
 	    try {
