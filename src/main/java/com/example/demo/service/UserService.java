@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import com.example.demo.Dto.ChangePasswordDto;
 import com.example.demo.Dto.LoginDto;
 import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.UserDto;
@@ -19,6 +20,8 @@ public interface UserService {
 	UserDto findUserByemail(String email);
 
 	int updateprofiledetails(UserDto userdto);
+
+	int changePassword(UserDto userdto, ChangePasswordDto changepassworddto);
 
 
 }

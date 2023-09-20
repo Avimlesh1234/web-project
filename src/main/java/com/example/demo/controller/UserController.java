@@ -17,19 +17,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Dto.UserDto;
+import com.example.demo.config.UserAuthProvider;
 import com.example.demo.model.Users;
+import com.example.demo.Dto.ChangePasswordDto;
 import com.example.demo.Dto.LoginDto;
 import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.ProductDto;
 import com.example.demo.Dto.SearchDto;
 import com.example.demo.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController()
 @RequestMapping("/user")
-@CrossOrigin("*")
+
+@RequiredArgsConstructor
 public class UserController {
 	@Autowired
 	private UserService userService;
+	
+	private UserAuthProvider userAuthProvider;
+	
+	
 	
 	@PostMapping(value="addusers")
 	public ResponseEntity <MessageDto> addUser(@RequestBody UserDto userdto){
@@ -133,16 +142,61 @@ public class UserController {
 		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
 	}
 	
+	@PostMapping(value="changepassword")
+	public ResponseEntity<MessageDto> changepassword(@RequestParam String email,@RequestBody ChangePasswordDto changepassworddto) {
+		
+		int status;
+		MessageDto messagedto=new MessageDto();
+	    try {
+	    	String Email=email;
+	    	UserDto userdto=userService.findUserByemail(Email);
+	    	
+	    	if(userdto!=null) {
+	    		status=userService.changePassword(userdto,changepassworddto);
+	    		if(status==1) {
+	    		messagedto.setStatus(200);
+	    		messagedto.setHttpstatus(HttpStatus.OK);
+	    		messagedto.setMessage("Password Changed Sucessfully");
+	    		messagedto.setData(userdto);
+	    		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	    	}
+	    		else {
+	    			messagedto.setStatus(400);
+		    		messagedto.setHttpstatus(HttpStatus.OK);
+		    		messagedto.setMessage("Password Changed Failed");
+		    		messagedto.setData(userdto);
+		    		return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	    		}
+	    	}
+	    	else {
+	    		messagedto.setStatus(403);
+	    		messagedto.setHttpstatus(HttpStatus.BAD_REQUEST);
+	    		messagedto.setMessage("Unable to Navigate On DashBoard");
+	    		messagedto.setData(userdto);
+	    	}
+	    	
+	    	
+	    	
+	    }catch(Exception e) {
+	    	e.printStackTrace();
+	    }
+	    return ResponseEntity.status(messagedto.getHttpstatus()).body(messagedto);
+	}
+		
 	
 	
-	@PostMapping(value="userlogin")
+	
+	
+	@PostMapping(value="login")
 	public  @ResponseBody MessageDto userLogin(@RequestBody LoginDto loginvo)
 	{
+		
 		MessageDto res=new MessageDto();
 		try {
 			if(!loginvo.getEmail().equals("") && !loginvo.getPassword().equals("") && loginvo!=null)
 			{
 				 res=userService.userLogin(loginvo);
+				 
 				return res;	
 			}
 			res.setMessage("invalid filed");

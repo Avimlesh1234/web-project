@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
 			while(size>0) {
 				searchdto=new SearchDto();
 				searchdto=searchdtolist.get(size-1);
-				productlist=productrepo.searchproductlist(searchdto.getSearchkey(),searchdto.getSearchvalue());
+				//productlist=productrepo.searchproductlist(searchdto.getSearchkey(),searchdto.getSearchvalue());
 				size--;
 				
 			}

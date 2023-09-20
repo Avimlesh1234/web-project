@@ -14,20 +14,31 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Dto.ChangePasswordDto;
 import com.example.demo.Dto.LoginDto;
 import com.example.demo.Dto.MessageDto;
 import com.example.demo.Dto.UserDto;
-
+import com.example.demo.Dto.UserDtoRegister;
 import com.example.demo.Utils.AesEncyption;
+import com.example.demo.config.UserAuthProvider;
+import com.example.demo.mappers.UserMapper;
 import com.example.demo.model.Users;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
+
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userrepo;
+	
+	private final UserMapper userMapper;
+	
+	private final UserAuthProvider userAuthProvider;
 
 	@Override
 	public List<UserDto> getUsers() {
@@ -95,11 +106,17 @@ public class UserServiceImpl implements UserService {
 	public MessageDto userLogin(LoginDto loginvo) {
 		// TODO Auto-generated method stub
 		MessageDto  messageDto= new MessageDto();
+		UserDtoRegister useresgisterdto=new UserDtoRegister();
 		try {
 			
 			String encyptedpassword = AesEncyption.encrypt(loginvo.getPassword());		
 			String useremail=loginvo.getEmail();
 			Users user=(Users)userrepo.findByEmail(useremail);
+			useresgisterdto=userMapper.toUserDtoRegister(user);
+			
+			useresgisterdto.setToken(userAuthProvider.createToken(useresgisterdto));
+			
+			
 		//	String decyptedpassword = AesEncyption.de(loginvo.getPassword());
 			if(user!=null)
 			{
@@ -108,6 +125,7 @@ public class UserServiceImpl implements UserService {
 					messageDto.setMessage("User Successfully Login");
 					messageDto.setStatus(200);
 					messageDto.setHttpstatus(HttpStatus.OK);
+					messageDto.setData(useresgisterdto);
 					return messageDto;
 				}
 				messageDto.setMessage("Password Missmatch");
@@ -182,6 +200,29 @@ public class UserServiceImpl implements UserService {
 		
 }
 		
+		return status;
+	}
+
+	@Override
+	public int changePassword(UserDto userdto, ChangePasswordDto changepassworddto) {
+		int status=0;
+		Users user=new Users();
+		String email=null;
+		try {
+			 user=(Users)userrepo.findByEmail(userdto.getEmail());
+			String encyptednewpwd=null;
+			email=user.getEmail();
+		
+			String oldpwd=AesEncyption.encrypt(changepassworddto.getOldpassword());
+			if(!changepassworddto.getOldpassword().equals("") && user.getPassword().equalsIgnoreCase(oldpwd)) {
+				encyptednewpwd=AesEncyption.encrypt(changepassworddto.getNewpassword());
+				status=userrepo.changepassword(email,encyptednewpwd);
+			
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return status;
 	}
 
